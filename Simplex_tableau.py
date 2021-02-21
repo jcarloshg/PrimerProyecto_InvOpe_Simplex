@@ -1,4 +1,5 @@
 from fractions import Fraction
+from prettytable import PrettyTable
 
 
 class Simplex:
@@ -9,7 +10,6 @@ class Simplex:
         self.n_restric = n_restric
         # Valores de z
         self.c = c
-        self.c_aux = c
         # Matríz de valores de las restricciones
         self.A = A
         # Lado derecho
@@ -65,25 +65,26 @@ class Simplex:
     # Método para imprimir el tableau actual
     def print_tableau(self):
         # RO
-        r_objetivo = ['RO']
+        r_objetivo = ['']
         for i in range(0, len(self.c)):
-            r_objetivo.append(self.c[i])
-        r_objetivo.append(self.b[0])
+            r_objetivo.append(Fraction(self.c[i]))
+        r_objetivo.append(Fraction(self.b[0]))
 
         # R1 to Rn
         lines = []
         for x in range(0, len(self.A)):
             linea = [self.tags_y[x]]
             for y in range(0, len(self.A[x])):
-                linea.append(self.A[x][y])
-            linea.append(self.b[x+1])
+                linea.append(Fraction(self.A[x][y]))
+            linea.append(Fraction(self.b[x + 1]))
             lines.append(linea)
 
         print('\nTableau')
-        print(*self.tags_x, sep='\t\t')
-        print(*r_objetivo, sep='\t\t')
+        table = PrettyTable(self.tags_x)
+        table.add_row(r_objetivo)
         for line in lines:
-            print(*line, sep='\t\t')
+            table.add_row(line)
+        print(table)
         print()
 
     # Encontrar el más negativo del RO
@@ -116,11 +117,12 @@ class Simplex:
         for i in range(0, len(pivote)):
             div = -1.0
             if pivote[i] != 0:
-                div = self.b[i+1] / pivote[i]
+                div = self.b[i + 1] / pivote[i]
             divisiones.append(div)
         # print(divisiones)
 
         menor = divisiones[0]
+        self.pivot_r = 0
         for i in range(0, len(divisiones)):
             if 0 <= divisiones[i] < menor:
                 menor = divisiones[i]
@@ -136,10 +138,10 @@ class Simplex:
         return hay_positivos
 
     def calcular_renglon_pivote(self):
-        divisor = self.A[self.pivot_c][self.pivot_c]
+        divisor = self.A[self.pivot_r][self.pivot_c]
         for i in range(0, len(self.A[self.pivot_r])):
             self.A[self.pivot_r][i] /= divisor
-        self.b[self.pivot_r+1] /= divisor
+        self.b[self.pivot_r + 1] /= divisor
         # print(self.A[self.pivot_r])
         # print(Fraction(self.b[self.pivot_r+1]))
 
@@ -148,25 +150,65 @@ class Simplex:
         x = roa[self.pivot_c]
         for i in range(0, len(roa)):
             self.c[i] = self.c[i] - (x * self.A[self.pivot_r][i])
-        self.b[0] = self.b[0] - (x * self.b[self.pivot_r+1])
-        print()
-        print(self.c)
-        print(self.b[0])
+        self.b[0] = self.b[0] - (x * self.b[self.pivot_r + 1])
+        # print()
+        # print(self.c)
+        # print(self.b[0])
 
     def calcular_reng_restantes(self):
-        print()
-        print(self.n_restric)
-        print(*self.A, sep='\n')
-        print(self.b)
-        print(self.z)
-        print(self.pivot_r)
+        for i in range(0, self.n_restric):
+            if i != self.pivot_r:
+                x = self.A[i][self.pivot_c]
+                for j in range(0, len(self.A[i])):
+                    self.A[i][j] = self.A[i][j] - (x * self.A[self.pivot_r][j])
+                self.b[i + 1] = self.b[i + 1] - (x * self.b[self.pivot_r + 1])
+        # print()
+        # print(self.A)
+        # print(self.b)
+
+    def realizar_simplex(self):
+        es_optimo = False
+        no_es_acotada = False
+
+        while es_optimo is False:
+            self.print_tableau()
+            if self.calcular_columna_pivote():
+                if self.calcular_pivote():
+                    self.calcular_renglon_pivote()
+                    self.calcular_nuevo_ro()
+                    self.calcular_reng_restantes()
+                else:
+                    es_optimo = True
+                    no_es_acotada = True
+            else:
+                es_optimo = True
+
+        if no_es_acotada:
+            print('La solución no está acotada.')
+        else:
+            print(f'El óptimo es \nz = {Fraction(self.b[0])}')
+            for i in range(0, len(self.tags_y)):
+                print(f'{self.tags_y[i]} = {Fraction(self.b[i+1])}')
 
 
 S = Simplex(3, 3, [5, 4, 3], [[2, 3, 1], [4, 1, 2], [3, 4, 2]], [5, 11, 8], 3)
 # S = Simplex(2, 4, [4, 3], [[2, 3], [-3, 2], [0, 2], [2, 1]], [6, 3, 5, 4], 4)
+S = Simplex(2, 2, [2, 1], [[1, -2], [1, -1]], [1, 4], 2)
+S.realizar_simplex()
+'''
 S.print_tableau()
 S.calcular_columna_pivote()
 S.calcular_pivote()
 S.calcular_renglon_pivote()
 S.calcular_nuevo_ro()
-# S.calcular_reng_restantes()
+S.calcular_reng_restantes()
+
+S.print_tableau()
+S.calcular_columna_pivote()
+S.calcular_pivote()
+S.calcular_renglon_pivote()
+S.calcular_nuevo_ro()
+S.calcular_reng_restantes()
+
+S.print_tableau()
+'''
