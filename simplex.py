@@ -7,6 +7,7 @@
 
 
 from numpy import *
+import numpy
 
 tablo = []
 renglonObj = []
@@ -26,7 +27,8 @@ def stringToTablo(arg):
         numFilas = len(arregloInit) 
         numColums = len(arregloInit[0].replace(" ", "").split(',')) 
 
-        tablo = zeros(shape=(numFilas, numColums))
+        # primero es una lista para después comvertirla en array de NUMPY
+        tablo = []
         
         i = 0
         while len(arregloInit) > 1:
@@ -41,20 +43,21 @@ def stringToTablo(arg):
                 renglonAux.pop(0)
 
                 # Convertir lista string float a lista float 
-                numAux = [float(idx) for idx in renglonAux]
-                numAux = array(numAux)
-                # tablo[i] = numAux
+                numAux = [float64(idx) for idx in renglonAux]
 
-                print(tablo[i])
-                print(numAux)
- 
-                # print(type(tablo[i]))
-                # print(type(numAux))
+                #insertamos el arrelo del convertido de string a float
+                tablo.insert(
+                        i,
+                        numpy.array(numAux, dtype=numpy.float64)
+                        )
 
                 # quitamos el renglo 
                 arregloInit.pop(0)
 
                 i += 1
+
+        # convertimos la lista de listas en un array tipo numpy.float64
+        tablo = array(tablo, dtype=numpy.float64)
 
                 
         print("numero de filas:    ", numFilas)
@@ -64,16 +67,13 @@ def stringToTablo(arg):
         print("tablo:              \n", tablo)
 
 
-
-
-
 # ================================
 # ================================
 #       CONFIGURACION INICIAL
 
 conIni = ""
 conIni += "  ,    x1,        x2,     s1,     s2,     s3,     s4,     z       \n"
-conIni += "S1,     4,         3,      1,      0,      0,      0,     100     \n"
+conIni += "S1,     1,         3,      1,      0,      0,      0,     100     \n"
 conIni += "S2,     2,         8,      0,      1,      0,      0,     200     \n"
 conIni += "S3,     1,         0,      0,      0,      1,      0,     24      \n"
 conIni += "S4,     0,         1,      0,      0,      0,      1,     30      \n"
