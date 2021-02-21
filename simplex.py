@@ -6,7 +6,7 @@
 # Jose Carlos Huerta García
 
 
-from numpy import *
+from numpy import *  
 import numpy
 
 
@@ -64,19 +64,73 @@ class Simplex:
                 print("basicas ini:        ", self.columBasIni)
                 print("tablo:              \n", self.tablo)
 
+        # se obtiene la vartiable que entra
+        def getPosicion_Entra(self):
+                # se le suma uno para que concieda con el indice del 
+                # self.renglonObj = []
+                return numpy.where(self.tablo[0] == numpy.amin(self.tablo[0]))[0][0] + 1
+        
+        #se obtiene la variale que sale
+        def getPosicion_Sale(self, indexColum):
+                min = []
+
+                # self.tablo[i][-1] obtiene el ultimo elemento del arreglo
+                # en este caso columa Z para obtener el menor
+                i = 0
+                while i < self.numFilas-1 :
+                        if self.tablo[i][indexColum] == 0 :
+                                resultAux = -1
+                        else:
+                                resultAux = self.tablo[i][-1] / self.tablo[i][indexColum]
+
+                        min.insert(
+                                i,
+                                resultAux
+                                )
+                        i += 1
+
+                # obtenemos el menor de la lista y nos aseguramos el menor no
+                # sea negativo en el segundo if 
+                minAux = 0
+                for numMin in min:
+                        if minAux < numMin  :
+                                if numMin > 0 :
+                                        minAux = numMin
+                
+                # se le suma uno para que concieda con el indice del 
+                # self.columBasIni = []
+                return min.index(minAux) + 1 
 
 
 
-# ================================================================
+
+        def resolveSimplex(self):
+
+                print('\n\n ========================= ITERACION ======')
+                # obtenermo los indeces de las listas 
+                # self.renglonObj & self.columBasIni
+                # mas no los indices del tablo
+                menorRO = self.getPosicion_Entra()
+                min = self.getPosicion_Sale(menorRO-1)
+
+                print ("Entra:  ",      self.renglonObj[menorRO], " Sale: ",        self.columBasIni[min])
+
+        
+
+
+
+# ================================================================================================================================
 #       CONFIGURACION INICIAL
 
 conIni = ""
 conIni += "  ,    x1,        x2,     s1,     s2,     s3,     s4,     z       \n"
-conIni += "S1,     1,         3,      1,      0,      0,      0,     100     \n"
+conIni += " Z,   -13,         2,      0,      0,      0,      0,     0       \n"
+conIni += "S1,     4,         3,      1,      0,      0,      0,     100     \n"
 conIni += "S2,     2,         8,      0,      1,      0,      0,     200     \n"
 conIni += "S3,     1,         0,      0,      0,      1,      0,     24      \n"
 conIni += "S4,     0,         1,      0,      0,      0,      1,     30      \n"
 
-# ================================================================
+# ================================================================================================================================
 
 simplex = Simplex(conIni)
+simplex.resolveSimplex()
