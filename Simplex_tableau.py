@@ -149,8 +149,9 @@ class Simplex:
         for i in range(0, len(roa)):
             self.c[i] = self.c[i] - (x * self.A[self.pivot_r][i])
         self.b[0] = self.b[0] - (x * self.b[self.pivot_r+1])
-        # print(self.c)
-        # print(self.b[0])
+        print()
+        print(self.c)
+        print(self.b[0])
 
     def calcular_reng_restantes(self):
         print()
@@ -168,4 +169,4 @@ S.calcular_columna_pivote()
 S.calcular_pivote()
 S.calcular_renglon_pivote()
 S.calcular_nuevo_ro()
-S.calcular_reng_restantes()
+# S.calcular_reng_restantes()
