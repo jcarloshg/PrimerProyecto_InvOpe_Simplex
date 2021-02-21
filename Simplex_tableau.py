@@ -193,22 +193,5 @@ class Simplex:
 
 S = Simplex(3, 3, [5, 4, 3], [[2, 3, 1], [4, 1, 2], [3, 4, 2]], [5, 11, 8], 3)
 # S = Simplex(2, 4, [4, 3], [[2, 3], [-3, 2], [0, 2], [2, 1]], [6, 3, 5, 4], 4)
-S = Simplex(2, 2, [2, 1], [[1, -2], [1, -1]], [1, 4], 2)
+# S = Simplex(2, 2, [2, 1], [[1, -2], [1, -1]], [1, 4], 2)
 S.realizar_simplex()
-'''
-S.print_tableau()
-S.calcular_columna_pivote()
-S.calcular_pivote()
-S.calcular_renglon_pivote()
-S.calcular_nuevo_ro()
-S.calcular_reng_restantes()
-
-S.print_tableau()
-S.calcular_columna_pivote()
-S.calcular_pivote()
-S.calcular_renglon_pivote()
-S.calcular_nuevo_ro()
-S.calcular_reng_restantes()
-
-S.print_tableau()
-'''
