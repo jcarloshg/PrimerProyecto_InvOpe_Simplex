@@ -32,11 +32,11 @@ class Simplex:
     # Definir etiquetas
     def __def_tags(self):
         for var in range(0, self.n_vars):
-            self.tags_x.append(f'x{var + 1}')
+            self.tags_x.append(f'x{var + 1} ')
 
         for var in range(0, self.n_holgura):
-            self.tags_x.append(f's{var + 1}')
-            self.tags_y.append(f's{var + 1}')
+            self.tags_x.append(f's{var + 1} ')
+            self.tags_y.append(f's{var + 1} ')
 
         self.tags_x.append('z')
         # print(self.tags_x)
@@ -61,6 +61,30 @@ class Simplex:
         self.b.insert(0, 0)
         # print(self.c)
         # print(self.b)
+
+    # Método para obtener el tableau actual
+    def get_tableau(self):
+        # RO
+        r_objetivo = ['']
+        for i in range(0, len(self.c)):
+            r_objetivo.append(Fraction(self.c[i]))
+        r_objetivo.append(Fraction(self.b[0]))
+
+        # R1 to Rn
+        lines = []
+        for x in range(0, len(self.A)):
+            linea = [self.tags_y[x]]
+            for y in range(0, len(self.A[x])):
+                linea.append(Fraction(self.A[x][y]))
+            linea.append(Fraction(self.b[x + 1]))
+            lines.append(linea)
+
+        table = PrettyTable(self.tags_x)
+        table.add_row(r_objetivo)
+        for line in lines:
+            table.add_row(line)
+
+        return table.get_html_string()
 
     # Método para imprimir el tableau actual
     def print_tableau(self):
@@ -134,7 +158,7 @@ class Simplex:
             hay_positivos = True
             print(f'Entra {self.tags_x[self.pivot_c + 1]}')
             print(f'Sale {self.tags_y[self.pivot_r]}')
-            self.tags_y[self.pivot_r] = self.tags_x[self.pivot_c + 1]
+            # self.tags_y[self.pivot_r] = self.tags_x[self.pivot_c + 1]
         return hay_positivos
 
     def calcular_renglon_pivote(self):
@@ -189,6 +213,42 @@ class Simplex:
             print(f'El óptimo es \nz = {Fraction(self.b[0])}')
             for i in range(0, len(self.tags_y)):
                 print(f'{self.tags_y[i]} = {Fraction(self.b[i + 1])}')
+
+    def realizar_simplex_gui(self):
+        resultado = []
+        es_optimo = False
+        no_es_acotada = False
+        idx = 1
+
+        while es_optimo is False:
+            resultado.append(f'Tableau {idx}')
+            resultado.append(self.get_tableau())
+            resultado.append('')
+            idx += 1
+            if self.calcular_columna_pivote():
+                if self.calcular_pivote():
+                    resultado.append(f'Entra {self.tags_x[self.pivot_c + 1]}')
+                    resultado.append(f'Sale {self.tags_y[self.pivot_r]}')
+                    self.tags_y[self.pivot_r] = self.tags_x[self.pivot_c + 1]
+                    resultado.append('')
+                    self.calcular_renglon_pivote()
+                    self.calcular_nuevo_ro()
+                    self.calcular_reng_restantes()
+                else:
+                    es_optimo = True
+                    no_es_acotada = True
+            else:
+                es_optimo = True
+
+        if no_es_acotada:
+            resultado.append('La solución no está acotada.')
+        else:
+            resultado.append('El óptimo es')
+            resultado.append(f'z = {Fraction(self.b[0])}')
+            for i in range(0, len(self.tags_y)):
+                resultado.append(f'{self.tags_y[i]} = {Fraction(self.b[i + 1])}')
+
+        return resultado
 
 
 def main():
