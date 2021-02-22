@@ -188,10 +188,45 @@ class Simplex:
         else:
             print(f'El óptimo es \nz = {Fraction(self.b[0])}')
             for i in range(0, len(self.tags_y)):
-                print(f'{self.tags_y[i]} = {Fraction(self.b[i+1])}')
+                print(f'{self.tags_y[i]} = {Fraction(self.b[i + 1])}')
 
 
-S = Simplex(3, 3, [5, 4, 3], [[2, 3, 1], [4, 1, 2], [3, 4, 2]], [5, 11, 8], 3)
-# S = Simplex(2, 4, [4, 3], [[2, 3], [-3, 2], [0, 2], [2, 1]], [6, 3, 5, 4], 4)
-# S = Simplex(2, 2, [2, 1], [[1, -2], [1, -1]], [1, 4], 2)
-S.realizar_simplex()
+def main():
+    n_variables = int(input('Número de variables: '))
+    n_restricciones = int(input('Número de variables: '))
+
+    z = []
+    print('\nFunción Objetivo Z = ')
+    for i in range(0, n_variables):
+        value = int(input(f'Valor de x{i+1} = '))
+        z.append(value)
+    print()
+    # print(z)
+
+    a = []
+    for j in range(0, n_restricciones):
+        print(f'Restricción {j+1}')
+        renglones = []
+        for k in range(0, n_variables):
+            valor = int(input(f'Valor de x{k+1} = '))
+            renglones.append(valor)
+        a.append(renglones)
+        print()
+    # print(a)
+
+    l_derecho = []
+    print('Lado derecho')
+    for x in range(0, n_restricciones):
+        value = int(input(f'Valor de x{x+1} = '))
+        l_derecho.append(value)
+    print()
+
+    S = Simplex(n_variables, n_restricciones, z, a, l_derecho, n_restricciones)
+    # S = Simplex(3, 3, [5, 4, 3], [[2, 3, 1], [4, 1, 2], [3, 4, 2]], [5, 11, 8], 3)
+    # S = Simplex(2, 4, [4, 3], [[2, 3], [-3, 2], [0, 2], [2, 1]], [6, 3, 5, 4], 4)
+    # S = Simplex(2, 2, [2, 1], [[1, -2], [1, -1]], [1, 4], 2)
+    S.realizar_simplex()
+
+
+if __name__ == '__main__':
+    main()
