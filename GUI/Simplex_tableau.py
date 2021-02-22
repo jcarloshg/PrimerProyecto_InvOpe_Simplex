@@ -140,7 +140,7 @@ class Simplex:
         # Encontrar el renglón pivote
         for i in range(0, len(pivote)):
             div = -1.0
-            if pivote[i] != 0:
+            if pivote[i] != 0 and self.b[i+1] != 0:
                 div = self.b[i + 1] / pivote[i]
             divisiones.append(div)
         # print(divisiones)
@@ -156,9 +156,7 @@ class Simplex:
         # Si hay positivos continua el simplex
         if menor >= 0:
             hay_positivos = True
-            print(f'Entra {self.tags_x[self.pivot_c + 1]}')
-            print(f'Sale {self.tags_y[self.pivot_r]}')
-            # self.tags_y[self.pivot_r] = self.tags_x[self.pivot_c + 1]
+
         return hay_positivos
 
     def calcular_renglon_pivote(self):
@@ -177,9 +175,10 @@ class Simplex:
         self.b[0] = self.b[0] - (x * self.b[self.pivot_r + 1])
         # print()
         # print(self.c)
-        # print(self.b[0])
+        # print(b[0])
 
     def calcular_reng_restantes(self):
+        degenerada = False
         for i in range(0, self.n_restric):
             if i != self.pivot_r:
                 x = self.A[i][self.pivot_c]
@@ -188,19 +187,29 @@ class Simplex:
                 self.b[i + 1] = self.b[i + 1] - (x * self.b[self.pivot_r + 1])
         # print()
         # print(self.A)
-        # print(self.b)
+        for k in range(1, len(self.b)):
+            if self.b[k] == 0:
+                degenerada = True
+
+        return degenerada
 
     def realizar_simplex(self):
         es_optimo = False
         no_es_acotada = False
+        es_degenerada = False
 
         while es_optimo is False:
             self.print_tableau()
             if self.calcular_columna_pivote():
                 if self.calcular_pivote():
+                    print(f'Entra {self.tags_x[self.pivot_c + 1]}')
+                    print(f'Sale {self.tags_y[self.pivot_r]}')
+                    self.tags_y[self.pivot_r] = self.tags_x[self.pivot_c + 1]
                     self.calcular_renglon_pivote()
                     self.calcular_nuevo_ro()
-                    self.calcular_reng_restantes()
+                    if self.calcular_reng_restantes():
+                        es_degenerada = True
+                        # es_optimo = True
                 else:
                     es_optimo = True
                     no_es_acotada = True
@@ -209,6 +218,12 @@ class Simplex:
 
         if no_es_acotada:
             print('La solución no está acotada.')
+        elif es_degenerada:
+            # self.print_tableau()
+            print('La solución es temporalmente degenerada.')
+            print(f'El óptimo es \nz = {Fraction(self.b[0])}')
+            for i in range(0, len(self.tags_y)):
+                print(f'{self.tags_y[i]} = {Fraction(self.b[i + 1])}')
         else:
             print(f'El óptimo es \nz = {Fraction(self.b[0])}')
             for i in range(0, len(self.tags_y)):
@@ -218,6 +233,7 @@ class Simplex:
         resultado = []
         es_optimo = False
         no_es_acotada = False
+        es_degenerada = False
         idx = 1
 
         while es_optimo is False:
@@ -233,7 +249,9 @@ class Simplex:
                     resultado.append('')
                     self.calcular_renglon_pivote()
                     self.calcular_nuevo_ro()
-                    self.calcular_reng_restantes()
+                    if self.calcular_reng_restantes():
+                        es_degenerada = True
+                        # es_optimo = True
                 else:
                     es_optimo = True
                     no_es_acotada = True
@@ -242,6 +260,15 @@ class Simplex:
 
         if no_es_acotada:
             resultado.append('La solución no está acotada.')
+        elif es_degenerada:
+            """resultado.append(f'Tableau {idx}')
+            resultado.append(self.get_tableau())
+            resultado.append('')"""
+            resultado.append('La solución es degenerada.')
+            resultado.append('El óptimo es')
+            resultado.append(f'z = {Fraction(self.b[0])}')
+            for i in range(0, len(self.tags_y)):
+                resultado.append(f'{self.tags_y[i]} = {Fraction(self.b[i + 1])}')
         else:
             resultado.append('El óptimo es')
             resultado.append(f'z = {Fraction(self.b[0])}')
@@ -252,6 +279,7 @@ class Simplex:
 
 
 def main():
+    """
     n_variables = int(input('Número de variables: '))
     n_restricciones = int(input('Número de variables: '))
 
@@ -280,11 +308,13 @@ def main():
         value = int(input(f'Valor de x{x+1} = '))
         l_derecho.append(value)
     print()
+    """
 
-    S = Simplex(n_variables, n_restricciones, z, a, l_derecho, n_restricciones)
+    # S = Simplex(n_variables, n_restricciones, z, a, l_derecho, n_restricciones)
     # S = Simplex(3, 3, [5, 4, 3], [[2, 3, 1], [4, 1, 2], [3, 4, 2]], [5, 11, 8], 3)
     # S = Simplex(2, 4, [4, 3], [[2, 3], [-3, 2], [0, 2], [2, 1]], [6, 3, 5, 4], 4)
     # S = Simplex(2, 2, [2, 1], [[1, -2], [1, -1]], [1, 4], 2)
+    S = Simplex(2, 3, [2, 1], [[4, 3], [4, 1], [4, -1]], [12, 8, 8], 3)
     S.realizar_simplex()
 
 
