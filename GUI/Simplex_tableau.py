@@ -65,26 +65,31 @@ class Simplex:
     # Método para obtener el tableau actual
     def get_tableau(self):
         # RO
-        r_objetivo = ['']
+        r_objetivo = ['\t']
         for i in range(0, len(self.c)):
-            r_objetivo.append(Fraction(self.c[i]))
-        r_objetivo.append(Fraction(self.b[0]))
+            r_objetivo.append(f'{Fraction(self.c[i])}\t')
+        r_objetivo.append(f'{Fraction(self.b[0])}\t')
 
         # R1 to Rn
         lines = []
         for x in range(0, len(self.A)):
-            linea = [self.tags_y[x]]
+            linea = [f'{self.tags_y[x]}\t']
             for y in range(0, len(self.A[x])):
-                linea.append(Fraction(self.A[x][y]))
-            linea.append(Fraction(self.b[x + 1]))
+                linea.append(f'{Fraction(self.A[x][y])}\t')
+            linea.append(f'{Fraction(self.b[x + 1])}\t')
             lines.append(linea)
 
-        table = PrettyTable(self.tags_x)
+        header = []
+        for i in range(0, len(self.tags_x)):
+            header.append(f'{self.tags_x[i]}\t')
+
+        table = PrettyTable(header)
         table.add_row(r_objetivo)
         for line in lines:
             table.add_row(line)
 
-        return table.get_html_string()
+        # return table.get_html_string()
+        return table.get_string()
 
     # Método para imprimir el tableau actual
     def print_tableau(self):

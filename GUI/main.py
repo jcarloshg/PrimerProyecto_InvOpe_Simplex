@@ -2,6 +2,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5 import QtWidgets
+
 from mainwindow import Ui_MainWindow
 from Simplex_tableau import Simplex
 import sys
@@ -20,10 +21,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.z_values = []
         self.A_values = []
         self.b_values = []
+        self.ui.boton.hide()
 
         # Connexions
         self.ui.btn_aceptar_1.clicked.connect(self.btn_aceptar_1_clicked)
         self.ui.btn_aceptar_2.clicked.connect(self.btn_aceptar_2_clicked)
+        # self.ui.btn_aceptar_3.clicked.connect(self.btn_aceptar_3_clicked)
 
     # Slots
     def btn_aceptar_1_clicked(self):
@@ -60,6 +63,13 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.ui.stackedWidget.setCurrentIndex(2)
 
+    """def btn_aceptar_3_clicked(self):
+        self.n_variables = 0
+        self.n_restricciones = 0
+        self.z_values = []
+        self.A_values = []
+        self.b_values = []"""
+
     # Methods
     def add_objective_function(self):
         label_z = QLabel('Z = ')
@@ -68,19 +78,20 @@ class MainWindow(QtWidgets.QMainWindow):
         layout.addSpacerItem(spacer)
         layout.addWidget(label_z)
         for i in range(0, self.n_variables):
-            input_n = QSpinBox()
-            input_n.setMinimum(-10)
-            input_n.setMaximum(10)
+            input_n = QDoubleSpinBox()
+            input_n.setMinimum(-999.99)
+            input_n.setMaximum(999.99)
+            input_n.setDecimals(3)
             label_n = QLabel('')
-            if i == self.n_variables-1:
-                label_n.setText(f' x{i+1}')
+            if i == self.n_variables - 1:
+                label_n.setText(f' x{i + 1}')
             else:
-                label_n.setText(f' x{i+1} + ')
+                label_n.setText(f' x{i + 1} + ')
             layout.addWidget(input_n)
             layout.addWidget(label_n)
             self.z_values.append(input_n)
         layout.addSpacerItem(spacer)
-        self.ui.scrollLayout.addRow(layout)
+        self.ui.lay.insertRow(0, layout)
 
     def add_restrictions(self):
         label_restriccion = QLabel('Sujeto a: ')
@@ -89,23 +100,26 @@ class MainWindow(QtWidgets.QMainWindow):
         layout.addSpacerItem(spacer)
         layout.addWidget(label_restriccion)
         layout.addSpacerItem(spacer)
-        self.ui.scrollLayout.addRow(layout)
+        self.ui.lay.insertRow(1, layout)
 
+        row_idx = 2
         for i in range(0, self.n_restricciones):
             layout_r = QHBoxLayout()
             layout_r.addSpacerItem(spacer)
             linea = []
             for j in range(0, self.n_variables):
-                input_n = QSpinBox()
-                input_n.setMinimum(-10)
-                input_n.setMaximum(10)
+                input_n = QDoubleSpinBox()
+                input_n.setMinimum(-999.99)
+                input_n.setMaximum(999.99)
+                input_n.setDecimals(3)
                 label_n = QLabel('')
                 linea.append(input_n)
                 if j == self.n_variables - 1:
                     label_n.setText(f' x{j + 1} ≤ ')
-                    input_b = QSpinBox()
-                    input_b.setMinimum(-99)
-                    input_b.setMaximum(99)
+                    input_b = QDoubleSpinBox()
+                    input_b.setMinimum(-999.99)
+                    input_b.setMaximum(999.99)
+                    input_b.setDecimals(3)
                     layout_r.addWidget(input_n)
                     layout_r.addWidget(label_n)
                     layout_r.addWidget(input_b)
@@ -115,8 +129,9 @@ class MainWindow(QtWidgets.QMainWindow):
                     layout_r.addWidget(input_n)
                     layout_r.addWidget(label_n)
             layout_r.addSpacerItem(spacer)
-            self.ui.scrollLayout.addRow(layout_r)
+            self.ui.lay.insertRow(row_idx, layout_r)
             self.A_values.append(linea)
+            row_idx += 1
 
 
 def main():
