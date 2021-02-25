@@ -150,7 +150,8 @@ class Simplex:
             divisiones.append(div)
         # print(divisiones)
 
-        menor = divisiones[0]
+        float_max = 1.7976931348623157e+308
+        menor = float_max
         self.pivot_r = 0
         for i in range(0, len(divisiones)):
             if 0 <= divisiones[i] < menor:
@@ -159,7 +160,7 @@ class Simplex:
         # print(f'Minimo={menor}\tPos:{self.pivot_r}\n')
 
         # Si hay positivos continua el simplex
-        if menor >= 0:
+        if menor >= 0 and menor != float_max:
             hay_positivos = True
 
         return hay_positivos
@@ -318,9 +319,9 @@ def main():
     # S = Simplex(n_variables, n_restricciones, z, a, l_derecho, n_restricciones)
     # S = Simplex(3, 3, [5, 4, 3], [[2, 3, 1], [4, 1, 2], [3, 4, 2]], [5, 11, 8], 3)
     # S = Simplex(2, 4, [4, 3], [[2, 3], [-3, 2], [0, 2], [2, 1]], [6, 3, 5, 4], 4)
-    # S = Simplex(2, 2, [2, 1], [[1, -2], [1, -1]], [1, 4], 2)
-    S = Simplex(2, 3, [2, 1], [[4, 3], [4, 1], [4, -1]], [12, 8, 8], 3)
-    S.realizar_simplex()
+    # S = Simplex(2, 2, [2, 1], [[1, -1], [2, -1]], [1, 4], 2)
+    # S = Simplex(2, 3, [2, 1], [[4, 3], [4, 1], [4, -1]], [12, 8, 8], 3)
+    # S.realizar_simplex()
 
 
 if __name__ == '__main__':
