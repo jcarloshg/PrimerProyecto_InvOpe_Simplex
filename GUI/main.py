@@ -163,6 +163,20 @@ class MainWindow(QtWidgets.QMainWindow):
             self.A_values.append(linea)
             row_idx += 1
 
+        str_x = ''
+        for i in range(0, self.n_variables):
+            if i == self.n_variables - 1:
+                str_x += f' x{i + 1} '
+            else:
+                str_x += f' x{i + 1}, '
+        str_x += '≥ 0'
+        label_x = QLabel(str_x)
+        layout_x = QHBoxLayout()
+        layout_x.addSpacerItem(spacer)
+        layout_x.addWidget(label_x)
+        layout_x.addSpacerItem(spacer)
+        self.ui.lay.insertRow(row_idx, layout_x)
+
     # Agregar el tableau actual a la ui
     def print_tableau(self):
         h_data = self.Simplex.tags_x

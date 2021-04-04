@@ -1,3 +1,11 @@
+# PRIMER PROYECTO [ SIMPLEX ]
+# Investigación de Operaciones, Primavera 2021
+
+# Alejandra Lizbeth Flores García
+# Luis David Hernández Reyes
+# Jose Carlos Huerta García
+
+
 from fractions import Fraction
 from prettytable import PrettyTable
 
